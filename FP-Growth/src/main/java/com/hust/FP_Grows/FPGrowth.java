@@ -37,14 +37,42 @@ public class FPGrowth {
 		TreeNode root = new TreeNode(null, 0, null);
 		//初始化索引表
 		headerTable = initHeaderTable(dataSet);
-		//对事物数据集重排序并过滤掉非频繁集
-		
+		//遍历事物集构建fp树
+		for (List<String> list : dataSet) {
+			//对事物数据集重排序并过滤掉非频繁集
+			LinkedList<String> orderItems =resortByHeader(list, headerTable);
+			updateTree(root,orderItems,headerTable);
+		}
 		
 		return root;
 	}
 	
-	public void updateTree(){
-		
+	public void updateTree(TreeNode root,LinkedList<String> orderItems,List<TreeNode> headerTable){
+		if(orderItems.size()>0){
+			while(orderItems.size()>0){
+				//取出字符串构建节点
+				String item = orderItems.poll();
+				
+				TreeNode node = root.findChild(item);
+				if(null==node){
+					node = new TreeNode(item, 1, root);
+					root.addChild(node);
+				}else{
+					node.countCreamter(1);
+				}
+				
+				for (TreeNode treeNode : headerTable) {
+					if(item.equals(treeNode.getName())){
+						TreeNode list = treeNode.getNodeLink();
+						while(list!= null){
+							list = list.getNodeLink();
+						}
+						list.setNodeLink(node);
+					}
+				}
+				updateTree(node, orderItems, headerTable);
+			}
+		}
 	}
 	/**
 	 * 根据头节点集合将事物重排序并过滤掉非频繁项
@@ -61,7 +89,7 @@ public class FPGrowth {
 					map.put(i, string);
 				}
 		}
-		
+		res = (LinkedList<String>) map.values();
 		return res;
 	}
 	
