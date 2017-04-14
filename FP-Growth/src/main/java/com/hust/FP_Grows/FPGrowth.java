@@ -41,9 +41,12 @@ public class FPGrowth {
 		for (List<String> list : dataSet) {
 			//对事物数据集重排序并过滤掉非频繁集
 			LinkedList<String> orderItems =resortByHeader(list, headerTable);
-			updateTree(root,orderItems,headerTable);
+			for (String string : orderItems) {
+				System.out.print("  @"+string);
+			}
+			System.out.println();
+		//	updateTree(root,orderItems,headerTable);
 		}
-		
 		return root;
 	}
 	
@@ -63,11 +66,10 @@ public class FPGrowth {
 				
 				for (TreeNode treeNode : headerTable) {
 					if(item.equals(treeNode.getName())){
-						TreeNode list = treeNode.getNodeLink();
-						while(list!= null){
-							list = list.getNodeLink();
+						while(treeNode.getNodeLink()!= null){
+							treeNode = treeNode.getNodeLink();
 						}
-						list.setNodeLink(node);
+						treeNode.setNodeLink(node);
 					}
 				}
 				updateTree(node, orderItems, headerTable);
@@ -84,12 +86,23 @@ public class FPGrowth {
 		LinkedList<String> res = new LinkedList<String>();
 		Map<Integer, String> map = new TreeMap<Integer,String>();
 		for (String string : data) {
-				int i = header.indexOf(string);
+				int i = -1;
+				int n = 0;
+				for (TreeNode node : header) {
+					if(string.equals(node.getName())){
+						i = n;
+						break;
+					}
+					n++;
+				}
 				if(i >= 0){
 					map.put(i, string);
 				}
 		}
-		res = (LinkedList<String>) map.values();
+		Set<Integer> set = map.keySet();
+		for (Integer integer : set) {
+			res.add(map.get(integer));
+		}
 		return res;
 	}
 	

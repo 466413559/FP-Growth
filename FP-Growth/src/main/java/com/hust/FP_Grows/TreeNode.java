@@ -122,6 +122,8 @@ public class TreeNode implements Comparable<TreeNode>{
 		}
 		System.out.print("  "+k[0]+" "+this.getName()+" "+this.getCount());
 		List<TreeNode> children =  this.getChildren();
+		if(children ==null)
+			return ;
 		for (TreeNode treeNode : children) {
 			treeNode.printChildren(k[0]++);
 		}
